@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/tremarkley/RequestIt/issues"
   },
-  "homepage": "https://github.com/tremarkley/RequestIt#readme"
+  "homepage": "https://github.com/tremarkley/RequestIt#readme",
+  "dependencies": {
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
+    "webpack": "^4.4.1"
+  }
 }
