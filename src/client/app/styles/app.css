@@ -1,0 +1,8 @@
+.requestContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.requestButtonDiv {
+  margin: auto;
+}
