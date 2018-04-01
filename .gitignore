@@ -3,3 +3,9 @@
 
 #NPM
 node_modules
+
+#API KEYS
+spotify.config.js
+
+#webpack 
+bundle.js
