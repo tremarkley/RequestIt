@@ -58,9 +58,9 @@ class App extends React.Component {
             <div className={style.descriptionDiv}>
               <p>Request what song you want to hear next!</p>
             </div>
-            <div className={style.requestButtonDiv}>
+            {/* <div className={style.requestButtonDiv}>
               <button className={style.requestButton}>Request</button>
-            </div>
+            </div> */}
           </div>
           <NowPlaying
             currentSong={this.state.currentSong}
