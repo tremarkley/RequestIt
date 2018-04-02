@@ -44,6 +44,7 @@ class App extends React.Component {
   async createPlaylist() {
     try {
       const newPlaylist = await axios.get('/songs/playlist');
+      await axios.put('/songs/turnOffShuffle');
       this.setState({ currentPlaylist: newPlaylist.data }, () => {
         this.getTopSongs();
       });
@@ -63,6 +64,8 @@ class App extends React.Component {
       newTopSongs[index].votes += 1;
       if (newTopSongs[index].votes > prevState.topVotedSong.votes) {
         nextState.topVotedSong = newTopSongs[index];
+        // re-order playlist
+        // await axios.put(`/songs/reorderplaylist/`)
       }
       nextState.topSongs = newTopSongs;
       return nextState;

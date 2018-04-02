@@ -65,13 +65,30 @@ router.get('/playlist', (req, res, next) => {
     request.post(playListOptions, (error, response, body) => {
       if (!error && (response.statusCode === 200 || response.statusCode === 201)) {
         res.send(body);
+      } else {
+        console.log(`unsuccessful post when creating playlist: ${JSON.stringify(response.body)}`);
+        if (error) {
+          next(error);
+        }
+        next(response.body);
       }
-      console.log(`unsuccessful post when creating playlist: ${JSON.stringify(response.body)}`);
-      if (error) {
-        next(error);
-      }
-      next(response.body);
     });
+  });
+});
+
+router.put('/turnOffShuffle', (req, res, next) => {
+  const shuffleUrl = `https://api.spotify.com/v1/me/player/shuffle?${querystring.stringify({
+    state: false,
+  })}`;
+  const shuffleOptions = getOptions(shuffleUrl);
+  request.put(shuffleOptions, (error, response) => {
+    if (!error && response.statusCode === 204) {
+      res.send('successfully toggled off shuffle');
+    } else if (error) {
+      next(error);
+    } else {
+      res.send('device temporarily unavailable');
+    }
   });
 });
 
@@ -92,7 +109,7 @@ router.put('/playlist/addSongs', (req, res) => {
     if (!error && response.statusCode === 201) {
       res.send('successfully added songs to playlist');
     }
-  })
+  });
 });
 
 module.exports = router;
