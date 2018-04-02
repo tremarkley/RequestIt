@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import style from './styles/app.css';
 import Login from './components/login';
 import NowPlaying from './components/nowPlaying';
@@ -8,9 +7,11 @@ import Leaderboard from './components/songLeaderboard';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   loggedin: false,
-    // };
+    this.state = {
+      topSongs: [],
+    };
+    this.updateTopSongs = this.updateTopSongs.bind(this);
+    this.upVote = this.upVote.bind(this);
     // this.loginClick = this.loginClick.bind(this);
   }
 
@@ -18,6 +19,24 @@ class App extends React.Component {
   //   console.log('login clicked');
   //   axios.get('/authenticate/login');
   // };
+
+  upVote(index) {
+    this.setState((prevState) => {
+      const newTopSongs = prevState.topSongs.slice();
+      newTopSongs[index].votes += 1;
+      return { topSongs: newTopSongs };
+    });
+  }
+
+  updateTopSongs(songs) {
+    const topSongs = [];
+    for (let i = 0; i < songs.length; i += 1) {
+      const newSong = songs[i];
+      newSong.votes = 0;
+      topSongs.push(newSong);
+    }
+    this.setState(prevState => ({ topSongs: topSongs.concat(prevState.topSongs) }));
+  }
 
   render() {
     const params = (new URL(document.location)).searchParams;
@@ -34,7 +53,11 @@ class App extends React.Component {
             </div>
           </div>
           <NowPlaying />
-          <Leaderboard />
+          <Leaderboard
+            topSongs={this.state.topSongs}
+            updateTopSongs={this.updateTopSongs}
+            vote={this.upVote}
+          />
         </div>
       );
     }

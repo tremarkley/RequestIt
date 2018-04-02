@@ -36,7 +36,7 @@ router.get('/login', (req, res) => {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  const scope = 'streaming playlist-modify-public user-read-playback-state user-modify-playback-state user-read-currently-playing';
+  const scope = 'streaming playlist-modify-public user-read-playback-state user-modify-playback-state user-read-currently-playing user-top-read';
   res.redirect(`https://accounts.spotify.com/authorize?${querystring.stringify({
     response_type: 'code',
     client_id: clientId,
@@ -79,7 +79,6 @@ router.get('/callback', (req, res) => {
         tokens.accessToken = accessToken;
         tokens.refreshToken = refreshToken;
         tokens.expiration = body.expires_in;
-        console.log('WROTE TO TOKENS');
         res.redirect('http://localhost:3333?authenticated=true');
 
         // res.send({ accessToken, refreshToken });
