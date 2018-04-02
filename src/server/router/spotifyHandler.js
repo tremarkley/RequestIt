@@ -1,9 +1,14 @@
 const express = require('express');
 const request = require('request');
+const bodyparser = require('body-parser');
 const querystring = require('querystring');
 const token = require('../token');
 
 const router = express.Router();
+let userId;
+
+router.use(bodyparser.json());
+router.use(bodyparser.urlencoded({ extended: false }));
 
 const getOptions = function getOptions(url) {
   const options = {
@@ -47,9 +52,9 @@ router.get('/playlist', (req, res, next) => {
     if (err) {
       next(err);
     }
-    const { id } = bodyAccess;
+    userId = bodyAccess.id;
     const playListOptions = {
-      url: `https://api.spotify.com/v1/users/${id}/playlists`,
+      url: `https://api.spotify.com/v1/users/${userId}/playlists`,
       headers: { Authorization: `Bearer ${token.accessToken}`, 'Content-Type': 'application/json' },
       form: JSON.stringify({
         name: `Request-It ${new Date().getTime()}`,
@@ -68,6 +73,26 @@ router.get('/playlist', (req, res, next) => {
       next(response.body);
     });
   });
+});
+
+router.put('/playlist/addSongs', (req, res) => {
+  console.log('adding to playlist');
+  const uris = [];
+  for (let i = 0; i < req.body.songs.length; i += 1) {
+    uris.push(req.body.songs[i].uri);
+  }
+  const songOptions = {
+    url: `https://api.spotify.com/v1/users/${userId}/playlists/${req.body.playlist}/tracks`,
+    headers: { Authorization: `Bearer ${token.accessToken}`, 'Content-Type': 'application/json' },
+    form: JSON.stringify({
+      uris,
+    }),
+  };
+  request.post(songOptions, (error, response) => {
+    if (!error && response.statusCode === 201) {
+      res.send('successfully added songs to playlist');
+    }
+  })
 });
 
 module.exports = router;

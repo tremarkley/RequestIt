@@ -18,17 +18,38 @@ class App extends React.Component {
     this.updateTopSongs = this.updateTopSongs.bind(this);
     this.upVote = this.upVote.bind(this);
     this.createPlaylist = this.createPlaylist.bind(this);
-    // this.loginClick = this.loginClick.bind(this);
   }
 
-  // loginClick() {
-  //   console.log('login clicked');
-  //   axios.get('/authenticate/login');
-  // };
+  async getTopSongs() {
+    try {
+      const response = await axios.get('/songs/topSongs');
+      // add top songs to playlist
+      const req = {
+        url: '/songs/playlist/addSongs',
+        method: 'PUT',
+        data: {
+          songs: response.data.items,
+          playlist: this.state.currentPlaylist.id,
+        },
+      };
+      await axios(req);
+      this.updateTopSongs(response.data.items);
+      alert(`Navigate to Created Playlist: ${this.state.currentPlaylist.name}`);
+      // this.props.updateTopSongs(response.data.items);
+    } catch (error) {
+      console.log(`error adding top songs: ${error}`);
+    }
+  }
 
   async createPlaylist() {
-    const newPlaylist = await axios.get('/songs/playlist');
-    this.setState({ currentPlaylist: newPlaylist });
+    try {
+      const newPlaylist = await axios.get('/songs/playlist');
+      this.setState({ currentPlaylist: newPlaylist.data }, () => {
+        this.getTopSongs();
+      });
+    } catch (error) {
+      alert(`error trying to create playlist: ${error}`);
+    }
   }
 
   updateCurrentSong(song) {
@@ -84,7 +105,7 @@ class App extends React.Component {
       );
     }
     return (
-      <Login loginClick={this.loginClick} />
+      <Login />
     );
   }
 }

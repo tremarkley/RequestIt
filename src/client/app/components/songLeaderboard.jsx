@@ -7,18 +7,18 @@ class leaderboard extends React.Component {
   constructor(props) {
     console.log('constructing leaderboard');
     super(props);
-    this.getTopSongs = this.getTopSongs.bind(this);
+    // this.getTopSongs = this.getTopSongs.bind(this);
   }
 
   async componentDidMount() {
     this.props.createPlaylist();
-    this.getTopSongs();
+    // this.getTopSongs();
   }
 
-  async getTopSongs() {
-    const response = await axios.get('/songs/topSongs');
-    this.props.updateTopSongs(response.data.items);
-  }
+  // async getTopSongs() {
+  //   const response = await axios.get('/songs/topSongs');
+  //   this.props.updateTopSongs(response.data.items);
+  // }
 
   render() {
     const topSongs = this.props.topSongs.map((song, index) => (

@@ -23,13 +23,17 @@ class nowPlaying extends React.Component {
 
   async checkCurrentSong() {
     console.log('checking current song...');
-    const response = await axios.get('/songs/currentlyPlaying');
-    if (this.props.currentSong.item.name !== response.data.item.name ||
-      this.props.currentSong.item.artists[0].name !== response.data.item.artists[0].name) {
-      console.log('new song detected');
-      this.props.updateCurrentSong(response.data);
+    try {
+      const response = await axios.get('/songs/currentlyPlaying');
+      if (this.props.currentSong.item.name !== response.data.item.name ||
+        this.props.currentSong.item.artists[0].name !== response.data.item.artists[0].name) {
+        console.log('new song detected');
+        this.props.updateCurrentSong(response.data);
+      }
+      this.songRemaining(response.data);
+    } catch (error) {
+      console.log(`error checking current song: ${error}`);
     }
-    this.songRemaining(response.data);
   }
 
   songRemaining(song) {
@@ -69,7 +73,11 @@ class nowPlaying extends React.Component {
 
 nowPlaying.propTypes = {
   updateCurrentSong: PropTypes.func.isRequired,
-  currentSong: PropTypes.object.isRequired,
+  currentSong: PropTypes.object
 };
+
+nowPlaying.defaultProps = {
+  currentSong: undefined,
+}
 
 export default nowPlaying;
