@@ -58,9 +58,14 @@ class App extends React.Component {
 
   upVote(index) {
     this.setState((prevState) => {
+      const nextState = {};
       const newTopSongs = prevState.topSongs.slice();
       newTopSongs[index].votes += 1;
-      return { topSongs: newTopSongs };
+      if (newTopSongs[index].votes > prevState.topVotedSong.votes) {
+        nextState.topVotedSong = newTopSongs[index];
+      }
+      nextState.topSongs = newTopSongs;
+      return nextState;
     });
   }
 
