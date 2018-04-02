@@ -40,8 +40,9 @@ router.get('/currentlyPlaying', (req, res, next) => {
   request.get(options, (err, responseAccess, bodyAccess) => {
     if (err) {
       next(err);
+    } else {
+      res.send(bodyAccess);
     }
-    res.send(bodyAccess);
   });
 });
 
@@ -54,8 +55,9 @@ router.get('/topSongs', (req, res, next) => {
   request.get(options, (err, responseAccess, bodyAccess) => {
     if (err) {
       next(err);
+    } else {
+      res.send(bodyAccess);
     }
-    res.send(bodyAccess);
   });
 });
 
@@ -83,8 +85,9 @@ router.post('/playlist/create', async (req, res, next) => {
       console.log(`unsuccessful post when creating playlist: ${JSON.stringify(response.body)}`);
       if (error) {
         next(error);
+      } else {
+        next(response.body);
       }
-      next(response.body);
     }
   });
 });
