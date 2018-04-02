@@ -13,6 +13,7 @@ class App extends React.Component {
       topVotedSong: undefined,
       currentSong: undefined,
       currentPlaylist: undefined,
+      songIndex: 0,
     };
     this.updateCurrentSong = this.updateCurrentSong.bind(this);
     this.updateTopSongs = this.updateTopSongs.bind(this);
@@ -66,10 +67,25 @@ class App extends React.Component {
         nextState.topVotedSong = newTopSongs[index];
         // re-order playlist
         // await axios.put(`/songs/reorderplaylist/`)
+        this.reOrderPlaylist(newTopSongs[index], index);
       }
       nextState.topSongs = newTopSongs;
       return nextState;
     });
+  }
+
+  async reOrderPlaylist(song, index) {
+    const req = {
+      url: '/songs/playlist/reorder',
+      method: 'PUT',
+      data: {
+        currentIndex: this.state.songIndex,
+        playlist: this.state.currentPlaylist.id,
+        song,
+        rangeStart: index,
+      },
+    };
+    await axios(req);
   }
 
   updateTopSongs(songs) {
