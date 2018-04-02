@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import style from './styles/app.css';
 import Login from './components/login';
 import NowPlaying from './components/nowPlaying';
@@ -11,10 +12,12 @@ class App extends React.Component {
       topSongs: [],
       topVotedSong: undefined,
       currentSong: undefined,
+      currentPlaylist: undefined,
     };
     this.updateCurrentSong = this.updateCurrentSong.bind(this);
     this.updateTopSongs = this.updateTopSongs.bind(this);
     this.upVote = this.upVote.bind(this);
+    this.createPlaylist = this.createPlaylist.bind(this);
     // this.loginClick = this.loginClick.bind(this);
   }
 
@@ -22,6 +25,11 @@ class App extends React.Component {
   //   console.log('login clicked');
   //   axios.get('/authenticate/login');
   // };
+
+  async createPlaylist() {
+    const newPlaylist = await axios.get('/songs/playlist');
+    this.setState({ currentPlaylist: newPlaylist });
+  }
 
   updateCurrentSong(song) {
     this.setState({ currentSong: song });
@@ -70,6 +78,7 @@ class App extends React.Component {
             topSongs={this.state.topSongs}
             updateTopSongs={this.updateTopSongs}
             vote={this.upVote}
+            createPlaylist={this.createPlaylist}
           />
         </div>
       );

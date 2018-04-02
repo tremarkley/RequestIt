@@ -40,4 +40,34 @@ router.get('/topSongs', (req, res, next) => {
   });
 });
 
+router.get('/playlist', (req, res, next) => {
+  const myProfileUrl = 'https://api.spotify.com/v1/me';
+  const myProfileOptions = getOptions(myProfileUrl);
+  request.get(myProfileOptions, (err, responseAccess, bodyAccess) => {
+    if (err) {
+      next(err);
+    }
+    const { id } = bodyAccess;
+    const playListOptions = {
+      url: `https://api.spotify.com/v1/users/${id}/playlists`,
+      headers: { Authorization: `Bearer ${token.accessToken}`, 'Content-Type': 'application/json' },
+      form: JSON.stringify({
+        name: `Request-It ${new Date().getTime()}`,
+        public: false,
+        description: 'auto-generated playlist by Request-It',
+      }),
+    };
+    request.post(playListOptions, (error, response, body) => {
+      if (!error && (response.statusCode === 200 || response.statusCode === 201)) {
+        res.send(body);
+      }
+      console.log(`unsuccessful post when creating playlist: ${JSON.stringify(response.body)}`);
+      if (error) {
+        next(error);
+      }
+      next(response.body);
+    });
+  });
+});
+
 module.exports = router;

@@ -5,11 +5,13 @@ import style from '../styles/leaderboard.css';
 
 class leaderboard extends React.Component {
   constructor(props) {
+    console.log('constructing leaderboard');
     super(props);
     this.getTopSongs = this.getTopSongs.bind(this);
   }
 
   async componentDidMount() {
+    this.props.createPlaylist();
     this.getTopSongs();
   }
 
@@ -55,6 +57,7 @@ leaderboard.propTypes = {
   topSongs: PropTypes.array.isRequired,
   updateTopSongs: PropTypes.func.isRequired,
   vote: PropTypes.func.isRequired,
+  createPlaylist: PropTypes.func.isRequired,
 };
 
 
