@@ -9,7 +9,10 @@ class App extends React.Component {
     super(props);
     this.state = {
       topSongs: [],
+      topVotedSong: undefined,
+      currentSong: undefined,
     };
+    this.updateCurrentSong = this.updateCurrentSong.bind(this);
     this.updateTopSongs = this.updateTopSongs.bind(this);
     this.upVote = this.upVote.bind(this);
     // this.loginClick = this.loginClick.bind(this);
@@ -19,6 +22,10 @@ class App extends React.Component {
   //   console.log('login clicked');
   //   axios.get('/authenticate/login');
   // };
+
+  updateCurrentSong(song) {
+    this.setState({ currentSong: song });
+  }
 
   upVote(index) {
     this.setState((prevState) => {
@@ -35,7 +42,10 @@ class App extends React.Component {
       newSong.votes = 0;
       topSongs.push(newSong);
     }
-    this.setState(prevState => ({ topSongs: topSongs.concat(prevState.topSongs) }));
+    this.setState(prevState => ({
+      topSongs: topSongs.concat(prevState.topSongs),
+      topVotedSong: topSongs[0],
+    }));
   }
 
   render() {
@@ -52,7 +62,10 @@ class App extends React.Component {
               <button className={style.requestButton}>Request</button>
             </div>
           </div>
-          <NowPlaying />
+          <NowPlaying
+            currentSong={this.state.currentSong}
+            updateCurrentSong={this.updateCurrentSong}
+          />
           <Leaderboard
             topSongs={this.state.topSongs}
             updateTopSongs={this.updateTopSongs}

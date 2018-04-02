@@ -1,3 +1,11 @@
+.currentSongText {
+  float: left;
+}
+
 .timeLeft {
   float: right;
+}
+
+.clear {
+  clear: both;
 }

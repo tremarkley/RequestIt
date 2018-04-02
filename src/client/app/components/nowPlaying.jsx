@@ -1,12 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import style from '../styles/nowPlaying.css';
 
 class nowPlaying extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentSong: undefined,
       timeRemaining: undefined,
     };
     this.checkCurrentSong = this.checkCurrentSong.bind(this);
@@ -18,20 +18,16 @@ class nowPlaying extends React.Component {
 
   async componentDidMount() {
     const response = await axios.get('/songs/currentlyPlaying');
-    this.updateSong(response.data);
-  }
-
-  updateSong(song) {
-    this.setState({ currentSong: song });
+    this.props.updateCurrentSong(response.data);
   }
 
   async checkCurrentSong() {
     console.log('checking current song...');
     const response = await axios.get('/songs/currentlyPlaying');
-    if (this.state.currentSong.item.name !== response.data.item.name ||
-      this.state.currentSong.item.artists[0].name !== response.data.item.artists[0].name) {
+    if (this.props.currentSong.item.name !== response.data.item.name ||
+      this.props.currentSong.item.artists[0].name !== response.data.item.artists[0].name) {
       console.log('new song detected');
-      this.updateSong(response.data);
+      this.props.updateCurrentSong(response.data);
     }
     this.songRemaining(response.data);
   }
@@ -50,20 +46,30 @@ class nowPlaying extends React.Component {
   }
 
   render() {
-    if (this.state.currentSong === undefined) {
+    if (this.props.currentSong === undefined) {
       return (
         <p>Loading Song...</p>
       );
     }
     return (
-      <p className={style.currentSongText}>
-      Currently Playing: {this.state.currentSong.item.name} by {this.state.currentSong.item.artists[0].name}
-        <div className={style.timeLeft}>
-          <span>Remaining: {this.state.timeRemaining}</span>
+      <div className={style.currentSongDiv}>
+        <div className={style.currentSongText}>
+          <p>
+          Currently Playing: {this.props.currentSong.item.name} by {this.props.currentSong.item.artists[0].name}
+          </p>
         </div>
-      </p>
+        <div className={style.timeLeft}>
+          <p className={style.timeLeft}>Remaining: {this.state.timeRemaining}</p>
+        </div>
+        <div className={style.clear} />
+      </div>
     );
   }
 }
+
+nowPlaying.propTypes = {
+  updateCurrentSong: PropTypes.func.isRequired,
+  currentSong: PropTypes.object.isRequired,
+};
 
 export default nowPlaying;
