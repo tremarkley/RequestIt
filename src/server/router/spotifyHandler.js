@@ -19,6 +19,20 @@ const getOptions = function getOptions(url) {
   return options;
 };
 
+const getUserProfile = function getUserProfile() {
+  return new Promise((resolve, reject) => {
+    const myProfileUrl = 'https://api.spotify.com/v1/me';
+    const myProfileOptions = getOptions(myProfileUrl);
+    request.get(myProfileOptions, (err, responseAccess, bodyAccess) => {
+      if (err) {
+        reject(err);
+      }
+      // userId = bodyAccess.id;
+      resolve(bodyAccess.id);
+    });
+  });
+};
+
 router.get('/currentlyPlaying', (req, res, next) => {
   const currentPlayUrl = 'https://api.spotify.com/v1/me/player/currently-playing';
   const options = getOptions(currentPlayUrl);
@@ -45,34 +59,33 @@ router.get('/topSongs', (req, res, next) => {
   });
 });
 
-router.get('/playlist', (req, res, next) => {
-  const myProfileUrl = 'https://api.spotify.com/v1/me';
-  const myProfileOptions = getOptions(myProfileUrl);
-  request.get(myProfileOptions, (err, responseAccess, bodyAccess) => {
-    if (err) {
-      next(err);
+router.post('/playlist/create', async (req, res, next) => {
+  if (userId === undefined) {
+    try {
+      userId = await getUserProfile();
+    } catch (error) {
+      next(error);
     }
-    userId = bodyAccess.id;
-    const playListOptions = {
-      url: `https://api.spotify.com/v1/users/${userId}/playlists`,
-      headers: { Authorization: `Bearer ${token.accessToken}`, 'Content-Type': 'application/json' },
-      form: JSON.stringify({
-        name: `Request-It ${new Date().getTime()}`,
-        public: false,
-        description: 'auto-generated playlist by Request-It',
-      }),
-    };
-    request.post(playListOptions, (error, response, body) => {
-      if (!error && (response.statusCode === 200 || response.statusCode === 201)) {
-        res.send(body);
-      } else {
-        console.log(`unsuccessful post when creating playlist: ${JSON.stringify(response.body)}`);
-        if (error) {
-          next(error);
-        }
-        next(response.body);
+  }
+  const playListOptions = {
+    url: `https://api.spotify.com/v1/users/${userId}/playlists`,
+    headers: { Authorization: `Bearer ${token.accessToken}`, 'Content-Type': 'application/json' },
+    form: JSON.stringify({
+      name: `Request-It ${new Date().getTime()}`,
+      public: false,
+      description: 'auto-generated playlist by Request-It',
+    }),
+  };
+  request.post(playListOptions, (error, response, body) => {
+    if (!error && (response.statusCode === 200 || response.statusCode === 201)) {
+      res.send(body);
+    } else {
+      console.log(`unsuccessful post when creating playlist: ${JSON.stringify(response.body)}`);
+      if (error) {
+        next(error);
       }
-    });
+      next(response.body);
+    }
   });
 });
 

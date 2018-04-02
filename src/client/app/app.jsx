@@ -44,7 +44,7 @@ class App extends React.Component {
 
   async createPlaylist() {
     try {
-      const newPlaylist = await axios.get('/songs/playlist');
+      const newPlaylist = await axios.post('/songs/playlist/create');
       await axios.put('/songs/turnOffShuffle');
       this.setState({ currentPlaylist: newPlaylist.data }, () => {
         this.getTopSongs();
