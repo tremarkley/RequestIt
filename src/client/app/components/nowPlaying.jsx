@@ -7,9 +7,13 @@ class nowPlaying extends React.Component {
     super(props);
     this.state = {
       currentSong: undefined,
+      timeRemaining: undefined,
     };
     this.checkCurrentSong = this.checkCurrentSong.bind(this);
-    setInterval(this.checkCurrentSong, 1000);
+    this.songRemaining = this.songRemaining.bind(this);
+    setInterval(() => {
+      this.checkCurrentSong();
+    }, 1000);
   }
 
   async componentDidMount() {
@@ -29,6 +33,20 @@ class nowPlaying extends React.Component {
       console.log('new song detected');
       this.updateSong(response.data);
     }
+    this.songRemaining(response.data);
+  }
+
+  songRemaining(song) {
+    if (song !== undefined) {
+      const totalSeconds = (song.item.duration_ms
+        - song.progress_ms) / 1000;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = Math.floor(totalSeconds - (minutes * 60));
+      const newTimeRemaining = `${minutes}:${seconds}`;
+      if (this.state.timeRemaining !== newTimeRemaining) {
+        this.setState({ timeRemaining: `${minutes}:${seconds}` });
+      }
+    }
   }
 
   render() {
@@ -40,6 +58,9 @@ class nowPlaying extends React.Component {
     return (
       <p className={style.currentSongText}>
       Currently Playing: {this.state.currentSong.item.name} by {this.state.currentSong.item.artists[0].name}
+        <div className={style.timeLeft}>
+          <span>Remaining: {this.state.timeRemaining}</span>
+        </div>
       </p>
     );
   }
