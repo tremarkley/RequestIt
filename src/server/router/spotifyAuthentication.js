@@ -7,7 +7,6 @@ const { clientId, clientSecret, redirectUri } = require('../../../spotify.config
 const tokens = require('../token');
 
 console.log(JSON.stringify(require('../../../spotify.config')));
-console.log(`CLIENT SECRET: ${clientSecret}`);
 
 const router = express.Router();
 
@@ -80,6 +79,7 @@ router.get('/callback', (req, res) => {
         tokens.accessToken = accessToken;
         tokens.refreshToken = refreshToken;
         tokens.expiration = body.expires_in;
+        console.log('WROTE TO TOKENS');
         res.redirect('http://localhost:3333?authenticated=true');
 
         // res.send({ accessToken, refreshToken });
