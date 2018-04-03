@@ -17,17 +17,18 @@ class nowPlaying extends React.Component {
   }
 
   async componentDidMount() {
-    const response = await axios.get('/songs/currentlyPlaying');
-    this.props.updateCurrentSong(response.data);
+    // const response = await axios.get('/songs/currentlyPlaying');
+    // this.props.updateCurrentSong(response.data);
+    this.checkCurrentSong();
   }
 
   async checkCurrentSong() {
-    console.log('checking current song...');
     try {
       const response = await axios.get('/songs/currentlyPlaying');
-      if (this.props.currentSong.item.name !== response.data.item.name ||
+      //  check if current song should be updated
+      if (this.props.currentSong === undefined ||
+        this.props.currentSong.item.name !== response.data.item.name ||
         this.props.currentSong.item.artists[0].name !== response.data.item.artists[0].name) {
-        console.log('new song detected');
         this.props.updateCurrentSong(response.data);
       }
       this.songRemaining(response.data);

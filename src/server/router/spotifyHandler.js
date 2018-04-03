@@ -27,7 +27,6 @@ const getUserProfile = function getUserProfile() {
       if (err) {
         reject(err);
       }
-      // userId = bodyAccess.id;
       resolve(bodyAccess.id);
     });
   });
@@ -45,6 +44,27 @@ router.get('/currentlyPlaying', (req, res, next) => {
     }
   });
 });
+
+// router.get('/currentlyPlaying', (req, res, next) => {
+//   const refresh = {
+//     url: `http://localhost:3333/authenticate/refresh_token?${querystring.stringify({
+//       refresh_token: token.refreshToken,
+//     })}`,
+//   };
+//   request.get(refresh, (err, response, body) => {
+//     const currentPlayUrl = 'https://api.spotify.com/v1/me/player/currently-playing';
+//     const options = getOptions(currentPlayUrl);
+//     // use the access token to access the Spotify Web API
+//     request.get(options, (error, responseAccess, bodyAccess) => {
+//       if (err) {
+//         next(err);
+//       } else {
+//         // res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+//         res.send(bodyAccess);
+//       }
+//     });
+//   });
+// });
 
 router.get('/topSongs', (req, res, next) => {
   const topSongsUrl = `https://api.spotify.com/v1/me/top/tracks?${querystring.stringify({

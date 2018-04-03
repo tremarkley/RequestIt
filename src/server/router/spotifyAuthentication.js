@@ -6,8 +6,6 @@ const path = require('path');
 const { clientId, clientSecret, redirectUri } = require('../../../spotify.config');
 const tokens = require('../token');
 
-console.log(JSON.stringify(require('../../../spotify.config')));
-
 const router = express.Router();
 
 /**
@@ -115,7 +113,7 @@ router.get('/refresh_token', (req, res) => {
   const refreshToken = req.query.refresh_token;
   const authOptions = {
     url: 'https://accounts.spotify.com/api/token',
-    headers: { Authorization: `Basic ${(Buffer.from(`${clientId}: ${clientSecret}`).toString('base64'))}` },
+    headers: { Authorization: `Basic ${(Buffer.from(`${clientId}:${clientSecret}`).toString('base64'))}` },
     form: {
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
@@ -126,6 +124,9 @@ router.get('/refresh_token', (req, res) => {
   request.post(authOptions, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       const accessToken = body.access_token;
+      tokens.accessToken = accessToken;
+      tokens.refreshToken = body.refresh_token;
+      tokens.expiration = body.expires_in;
       res.send({
         access_token: accessToken,
       });
