@@ -9,48 +9,21 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      topSongs: [],
+      songsAvailable: [],
       topVotedSong: undefined,
       currentSong: undefined,
-      currentPlaylist: undefined,
-      songIndex: 0,
     };
     this.updateCurrentSong = this.updateCurrentSong.bind(this);
-    this.updateTopSongs = this.updateTopSongs.bind(this);
+    this.addTopSongs = this.addTopSongs.bind(this);
     this.upVote = this.upVote.bind(this);
-    this.createPlaylist = this.createPlaylist.bind(this);
   }
 
   async getTopSongs() {
     try {
       const response = await axios.get('/songs/topSongs');
-      // add top songs to playlist
-      const req = {
-        url: '/songs/playlist/addSongs',
-        method: 'PUT',
-        data: {
-          songs: response.data.items,
-          playlist: this.state.currentPlaylist.id,
-        },
-      };
-      await axios(req);
-      this.updateTopSongs(response.data.items);
-      alert(`Navigate to Created Playlist: ${this.state.currentPlaylist.name}`);
-      // this.props.updateTopSongs(response.data.items);
+      this.addTopSongs(response.data.items);
     } catch (error) {
       console.log(`error adding top songs: ${error}`);
-    }
-  }
-
-  async createPlaylist() {
-    try {
-      const newPlaylist = await axios.post('/songs/playlist/create');
-      await axios.put('/songs/turnOffShuffle');
-      this.setState({ currentPlaylist: newPlaylist.data }, () => {
-        this.getTopSongs();
-      });
-    } catch (error) {
-      alert(`error trying to create playlist: ${error}`);
     }
   }
 
@@ -65,40 +38,27 @@ class App extends React.Component {
       newTopSongs[index].votes += 1;
       if (newTopSongs[index].votes > prevState.topVotedSong.votes) {
         nextState.topVotedSong = newTopSongs[index];
-        // re-order playlist
-        // await axios.put(`/songs/reorderplaylist/`)
-        this.reOrderPlaylist(newTopSongs[index], index);
       }
       nextState.topSongs = newTopSongs;
       return nextState;
     });
   }
 
-  async reOrderPlaylist(song, index) {
-    const req = {
-      url: '/songs/playlist/reorder',
-      method: 'PUT',
-      data: {
-        currentIndex: this.state.songIndex,
-        playlist: this.state.currentPlaylist.id,
-        song,
-        rangeStart: index,
-      },
-    };
-    await axios(req);
-  }
-
-  updateTopSongs(songs) {
+  addTopSongs(songs) {
     const topSongs = [];
     for (let i = 0; i < songs.length; i += 1) {
       const newSong = songs[i];
       newSong.votes = 0;
       topSongs.push(newSong);
     }
-    this.setState(prevState => ({
-      topSongs: topSongs.concat(prevState.topSongs),
-      topVotedSong: topSongs[0],
-    }));
+    this.setState((prevState) => {
+      const nextState = {};
+      if (prevState.topVotedSong === undefined) {
+        [nextState.topVotedSong] = topSongs;
+      }
+      nextState.songsAvailable = topSongs.concat(prevState.songsAvailable);
+      return nextState;
+    });
   }
 
   render() {
@@ -120,10 +80,9 @@ class App extends React.Component {
             updateCurrentSong={this.updateCurrentSong}
           />
           <Leaderboard
-            topSongs={this.state.topSongs}
-            updateTopSongs={this.updateTopSongs}
+            songsAvailable={this.state.songsAvailable}
+            addTopSongs={this.addTopSongs}
             vote={this.upVote}
-            createPlaylist={this.createPlaylist}
           />
         </div>
       );

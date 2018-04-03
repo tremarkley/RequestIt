@@ -4,32 +4,25 @@ import axios from 'axios';
 import style from '../styles/leaderboard.css';
 
 class leaderboard extends React.Component {
-  constructor(props) {
-    console.log('constructing leaderboard');
-    super(props);
-    // this.getTopSongs = this.getTopSongs.bind(this);
+  componentDidMount() {
+    this.getTopSongs();
   }
 
-  async componentDidMount() {
-    this.props.createPlaylist();
-    // this.getTopSongs();
+  async getTopSongs() {
+    const response = await axios.get('/songs/topSongs');
+    this.props.addTopSongs(response.data.items);
   }
-
-  // async getTopSongs() {
-  //   const response = await axios.get('/songs/topSongs');
-  //   this.props.updateTopSongs(response.data.items);
-  // }
 
   render() {
-    const topSongs = this.props.topSongs.map((song, index) => (
+    const songsAvailable = this.props.songsAvailable.map(song => (
       <tr key={song.id}>
         <td>{song.name}</td>
         <td>{song.artists[0].name}</td>
         <td>{song.votes}</td>
-        <td><button onClick={() => this.props.vote(index)}>Vote!</button></td>
+        <td><button onClick={this.props.vote}>Vote!</button></td>
       </tr>
     ));
-    if (topSongs.length > 0) {
+    if (songsAvailable.length > 0) {
       return (
         <div className={style.leaderboardContainer}>
           <table>
@@ -41,7 +34,7 @@ class leaderboard extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {topSongs}
+              {songsAvailable}
             </tbody>
           </table>
         </div>
@@ -54,10 +47,9 @@ class leaderboard extends React.Component {
 }
 
 leaderboard.propTypes = {
-  topSongs: PropTypes.array.isRequired,
-  updateTopSongs: PropTypes.func.isRequired,
+  songsAvailable: PropTypes.array.isRequired,
+  addTopSongs: PropTypes.func.isRequired,
   vote: PropTypes.func.isRequired,
-  createPlaylist: PropTypes.func.isRequired,
 };
 
 
