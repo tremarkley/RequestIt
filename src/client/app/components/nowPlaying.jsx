@@ -1,7 +1,7 @@
 import React from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import style from '../styles/nowPlaying.css';
+import { subscribeToCurrentlyPlaying } from '../api';
 
 class nowPlaying extends React.Component {
   constructor(props) {
@@ -11,30 +11,17 @@ class nowPlaying extends React.Component {
     };
     this.checkCurrentSong = this.checkCurrentSong.bind(this);
     this.songRemaining = this.songRemaining.bind(this);
-    setInterval(() => {
-      this.checkCurrentSong();
-    }, 1000);
+    subscribeToCurrentlyPlaying(this.checkCurrentSong);
   }
 
-  async componentDidMount() {
-    // const response = await axios.get('/songs/currentlyPlaying');
-    // this.props.updateCurrentSong(response.data);
-    this.checkCurrentSong();
-  }
-
-  async checkCurrentSong() {
-    try {
-      const response = await axios.get('/songs/currentlyPlaying');
-      //  check if current song should be updated
-      if (this.props.currentSong === undefined ||
-        this.props.currentSong.item.name !== response.data.item.name ||
-        this.props.currentSong.item.artists[0].name !== response.data.item.artists[0].name) {
-        this.props.updateCurrentSong(response.data);
-      }
-      this.songRemaining(response.data);
-    } catch (error) {
-      console.log(`error checking current song: ${error}`);
+  checkCurrentSong(song) {
+    //  check if current song should be updated
+    if (this.props.currentSong === undefined ||
+      this.props.currentSong.item.name !== song.item.name ||
+      this.props.currentSong.item.artists[0].name !== song.item.artists[0].name) {
+      this.props.updateCurrentSong(song);
     }
+    this.songRemaining(song);
   }
 
   songRemaining(song) {
@@ -42,7 +29,10 @@ class nowPlaying extends React.Component {
       const totalSeconds = (song.item.duration_ms
         - song.progress_ms) / 1000;
       const minutes = Math.floor(totalSeconds / 60);
-      const seconds = Math.floor(totalSeconds - (minutes * 60));
+      let seconds = Math.floor(totalSeconds - (minutes * 60));
+      if (seconds < 10) {
+        seconds = `0${seconds}`;
+      }
       const newTimeRemaining = `${minutes}:${seconds}`;
       if (this.state.timeRemaining !== newTimeRemaining) {
         this.setState({ timeRemaining: `${minutes}:${seconds}` });
