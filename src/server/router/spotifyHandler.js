@@ -3,6 +3,7 @@ const request = require('request');
 const bodyparser = require('body-parser');
 const querystring = require('querystring');
 const token = require('../token');
+const { requestNextSong } = require('../spotifyAPIController/controller');
 
 const router = express.Router();
 let userId;
@@ -159,13 +160,23 @@ router.put('/playlist/reorder', (req, res, next) => {
   };
   request.put(reorderOptions, (error, response) => {
     if (!error && response.statusCode === 200) {
-      res.send('successfully reorderd');
+      res.send('successfully reordered');
     } else if (error) {
       next(error);
     } else {
       res.send('unable to reorder');
     }
   });
+});
+
+router.put('/requestSong', async (req, res, next) => {
+  const songUri = req.body.uri;
+  try {
+    await requestNextSong(songUri);
+    res.send('successfully requested song');
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

@@ -16,6 +16,7 @@ class App extends React.Component {
     this.updateCurrentSong = this.updateCurrentSong.bind(this);
     this.addTopSongs = this.addTopSongs.bind(this);
     this.upVote = this.upVote.bind(this);
+    this.requestNextSong = this.requestNextSong.bind(this);
   }
 
   async getTopSongs() {
@@ -34,14 +35,27 @@ class App extends React.Component {
   upVote(index) {
     this.setState((prevState) => {
       const nextState = {};
-      const newTopSongs = prevState.topSongs.slice();
+      const newTopSongs = prevState.songsAvailable.slice();
       newTopSongs[index].votes += 1;
       if (newTopSongs[index].votes > prevState.topVotedSong.votes) {
         nextState.topVotedSong = newTopSongs[index];
+        // make call to request next song
+        this.requestNextSong(nextState.topVotedSong.uri);
       }
       nextState.topSongs = newTopSongs;
       return nextState;
     });
+  }
+
+  requestNextSong(uri) {
+    const req = {
+      url: '/songs/requestSong',
+      method: 'PUT',
+      data: {
+        uri,
+      }
+    };
+    axios(req);
   }
 
   addTopSongs(songs) {

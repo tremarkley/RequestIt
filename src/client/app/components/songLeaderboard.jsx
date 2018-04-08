@@ -14,12 +14,12 @@ class leaderboard extends React.Component {
   }
 
   render() {
-    const songsAvailable = this.props.songsAvailable.map(song => (
+    const songsAvailable = this.props.songsAvailable.map((song, index) => (
       <tr key={song.id}>
         <td>{song.name}</td>
         <td>{song.artists[0].name}</td>
         <td>{song.votes}</td>
-        <td><button onClick={this.props.vote}>Vote!</button></td>
+        <td><button onClick={() => this.props.vote(index)}>Vote!</button></td>
       </tr>
     ));
     if (songsAvailable.length > 0) {
