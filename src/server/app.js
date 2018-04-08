@@ -29,18 +29,24 @@ io.on('connect', (client) => {
   client.on('subscribeToCurrentlyPlaying', () => {
     console.log('client subscribing to currently playing song');
     let currentSong;
+    let waitingForResponse = false;
     setInterval(() => {
-      getCurrentlyPlaying()
-        .then((data) => {
-          if (data.item.id !== currentSong) {
-            currentSong = data.item.id;
-            client.emit('newSong', data);
-          }
-          client.emit('currentlyPlaying', data);
-        })
-        .catch((error) => {
-          console.log(`error getting currently playing ${error}`);
-        });
+      if (!waitingForResponse) {
+        waitingForResponse = true;
+        getCurrentlyPlaying()
+          .then((data) => {
+            waitingForResponse = false;
+            if (data.item.id !== currentSong) {
+              currentSong = data.item.id;
+              client.emit('newSong', data);
+            }
+            client.emit('currentlyPlaying', data);
+          })
+          .catch((error) => {
+            waitingForResponse = false;
+            console.log(`error getting currently playing ${error}`);
+          });
+      }
     }, 1000);
   });
 });
