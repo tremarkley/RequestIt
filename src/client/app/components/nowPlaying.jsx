@@ -9,19 +9,8 @@ class nowPlaying extends React.Component {
     this.state = {
       timeRemaining: undefined,
     };
-    this.checkCurrentSong = this.checkCurrentSong.bind(this);
     this.songRemaining = this.songRemaining.bind(this);
-    subscribeToCurrentlyPlaying(this.checkCurrentSong);
-  }
-
-  checkCurrentSong(song) {
-    //  check if current song should be updated
-    if (this.props.currentSong === undefined ||
-      this.props.currentSong.item.name !== song.item.name ||
-      this.props.currentSong.item.artists[0].name !== song.item.artists[0].name) {
-      this.props.updateCurrentSong(song);
-    }
-    this.songRemaining(song);
+    subscribeToCurrentlyPlaying(this.songRemaining, this.props.updateCurrentSong);
   }
 
   songRemaining(song) {
