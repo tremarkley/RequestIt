@@ -9,8 +9,8 @@ class leaderboard extends React.Component {
   }
 
   async getTopSongs() {
-    const response = await axios.get('/songs/topSongs');
-    this.props.addTopSongs(response.data.items);
+    const response = await axios.get('songs/topSongs');
+    this.props.addTopSongs(response.data.songs);
   }
 
   render() {

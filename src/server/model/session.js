@@ -4,7 +4,9 @@ class Session {
   }
 
   addSong(song) {
-    this.songs.push(song);
+    const songObj = song;
+    songObj.votes = 0;
+    this.songs.push(songObj);
   }
 }
 

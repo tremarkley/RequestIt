@@ -60,20 +60,21 @@ class App extends React.Component {
   }
 
   addTopSongs(songs) {
-    const topSongs = [];
-    for (let i = 0; i < songs.length; i += 1) {
-      const newSong = songs[i];
-      newSong.votes = 0;
-      topSongs.push(newSong);
-      //  send song to server
-    }
-    this.setState((prevState) => {
-      const nextState = {};
-      if (prevState.topVotedSong === undefined) {
-        [nextState.topVotedSong] = topSongs;
-      }
-      nextState.songsAvailable = topSongs.concat(prevState.songsAvailable);
-      return nextState;
+    // const topSongs = [];
+    // for (let i = 0; i < songs.length; i += 1) {
+    //   const newSong = songs[i];
+    //   newSong.votes = 0;
+    //   topSongs.push(newSong);
+    //   //  send song to server
+    // }
+    this.setState({
+      songsAvailable: songs,
+      // const nextState = {};
+      // if (prevState.topVotedSong === undefined) {
+      //   [nextState.topVotedSong] = topSongs;
+      // // }
+      // nextState.songsAvailable = topSongs.concat(prevState.songsAvailable);
+      // return nextState;
     });
   }
 

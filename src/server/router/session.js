@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.use(bodyparser.json());
 router.use(bodyparser.urlencoded({ extended: false }));
-router.use(express.static(staticPath));
+router.use('/client/:id', express.static(staticPath));
 
 router.get('/start', async (req, res, next) => {
   try {
@@ -24,14 +24,14 @@ router.get('/start', async (req, res, next) => {
     const id = 1;
     currentSessions[id] = newSession;
     // res.send('started session');
-    res.redirect(`http://localhost:3333/session/?id=${id}`);
+    res.redirect(`http://localhost:3333/session/client/${id}`);
   } catch (error) {
     console.log('error creating session');
     next(error);
   }
 });
 
-router.get('/songs/topSongs/:id', (req, res) => {
+router.get('/client/:id/songs/topSongs', (req, res) => {
   const sessionId = req.params.id;
   if (currentSessions[sessionId]) {
     res.send(currentSessions[sessionId]);
