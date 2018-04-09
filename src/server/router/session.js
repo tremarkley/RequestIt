@@ -31,4 +31,13 @@ router.get('/start', async (req, res, next) => {
   }
 });
 
+router.get('/songs/topSongs/:id', (req, res) => {
+  const sessionId = req.params.id;
+  if (currentSessions[sessionId]) {
+    res.send(currentSessions[sessionId]);
+  } else {
+    res.status(500).send('Session not available');
+  }
+});
+
 module.exports = router;
