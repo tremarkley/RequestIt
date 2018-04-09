@@ -12,13 +12,12 @@ class App extends React.Component {
       songsAvailable: [],
       topVotedSong: undefined,
       currentSong: undefined,
-      sessionStarted: false,
     };
     this.updateCurrentSong = this.updateCurrentSong.bind(this);
     this.addTopSongs = this.addTopSongs.bind(this);
     this.upVote = this.upVote.bind(this);
     this.requestNextSong = this.requestNextSong.bind(this);
-    this.startSession = this.startSession.bind(this);
+    // this.startSession = this.startSession.bind(this);
   }
 
   // async getTopSongs() {
@@ -29,18 +28,6 @@ class App extends React.Component {
   //     console.log(`error adding top songs: ${error}`);
   //   }
   // }
-
-  async startSession() {
-    try {
-      await axios.post('/session/start');
-      this.setState({
-        sessionStarted: true,
-      });
-    } catch (error) {
-      console.log('unable to start session');
-    }
-  }
-
 
   updateCurrentSong(song) {
     this.setState({ currentSong: song });
@@ -93,31 +80,31 @@ class App extends React.Component {
   render() {
     const params = (new URL(document.location)).searchParams;
     if (params.get('authenticated')) {
-      if (this.state.sessionStarted) {
-        return (
-          <div className="container">
-            <h1>Request-It</h1>
-            <div className={style.requestContainer}>
-              <div className={style.descriptionDiv}>
-                <p>Request what song you want to hear next!</p>
-              </div>
-              {/* <div className={style.requestButtonDiv}>
-                <button className={style.requestButton}>Request</button>
-              </div> */}
+      return <a href="/session/start">Start Session</a>;
+    }
+    if (document.location.href.split('/')[3] === 'session') {
+      return (
+        <div className="container">
+          <h1>Request-It</h1>
+          <div className={style.requestContainer}>
+            <div className={style.descriptionDiv}>
+              <p>Request what song you want to hear next!</p>
             </div>
-            <NowPlaying
-              currentSong={this.state.currentSong}
-              updateCurrentSong={this.updateCurrentSong}
-            />
-            <Leaderboard
-              songsAvailable={this.state.songsAvailable}
-              addTopSongs={this.addTopSongs}
-              vote={this.upVote}
-            />
+            {/* <div className={style.requestButtonDiv}>
+              <button className={style.requestButton}>Request</button>
+            </div> */}
           </div>
-        );
-      }
-      return <button onClick={this.startSession}>Start Session</button>;
+          <NowPlaying
+            currentSong={this.state.currentSong}
+            updateCurrentSong={this.updateCurrentSong}
+          />
+          <Leaderboard
+            songsAvailable={this.state.songsAvailable}
+            addTopSongs={this.addTopSongs}
+            vote={this.upVote}
+          />
+        </div>
+      );
     }
     return (
       <Login />
