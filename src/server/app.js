@@ -4,6 +4,7 @@ const path = require('path');
 const morgan = require('morgan');
 const spotify = require('./router/spotifyHandler');
 const authentication = require('./router/spotifyAuthentication');
+const session = require('./router/session');
 const { logErrors, errorHandler } = require('./errorHandler');
 require('./sockets/socketHandlers');
 
@@ -19,6 +20,8 @@ app.use(express.static(staticPath));
 app.use('/authenticate', authentication);
 
 app.use('/songs', spotify);
+
+app.use('/session', session);
 
 app.use(logErrors);
 app.use(errorHandler);

@@ -5,13 +5,13 @@ import style from '../styles/leaderboard.css';
 
 class leaderboard extends React.Component {
   componentDidMount() {
-    this.getTopSongs();
+    // this.getTopSongs();
   }
 
-  async getTopSongs() {
-    const response = await axios.get('/songs/topSongs');
-    this.props.addTopSongs(response.data.items);
-  }
+  // async getTopSongs() {
+  //   const response = await axios.get('/songs/topSongs');
+  //   this.props.addTopSongs(response.data.items);
+  // }
 
   render() {
     const songsAvailable = this.props.songsAvailable.map((song, index) => (

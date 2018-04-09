@@ -8,4 +8,12 @@ const subscribeToCurrentlyPlaying = (songInfoCallback, newSongCallback) => {
   socket.emit('subscribeToCurrentlyPlaying');
 };
 
-export { subscribeToCurrentlyPlaying };
+const sendSong = (song) => {
+  socket.emit('newSong', song);
+};
+
+const sendNewVote = (newVote) => {
+  socket.emit('newVote', newVote);
+};
+
+export { subscribeToCurrentlyPlaying, sendNewVote, sendSong };

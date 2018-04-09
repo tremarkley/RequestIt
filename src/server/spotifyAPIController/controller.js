@@ -1,4 +1,5 @@
 const request = require('request');
+const querystring = require('querystring');
 const token = require('../token');
 
 const getOptions = (url, form = {}) => {
@@ -45,7 +46,25 @@ const requestNextSong = uri => (
   })
 );
 
+const getTopSongs = () => (
+  new Promise((resolve, reject) => {
+    const topSongsUrl = `https://api.spotify.com/v1/me/top/tracks?${querystring.stringify({
+      limit: 10,
+      time_range: 'short_term',
+    })}`;
+    const options = getOptions(topSongsUrl);
+    request.get(options, (err, responseAccess, bodyAccess) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(bodyAccess);
+      }
+    });
+  })
+);
+
 module.exports = {
   getCurrentlyPlaying,
   requestNextSong,
+  getTopSongs,
 };
